@@ -6,74 +6,78 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.models.productes.Producte;
 import com.models.productes.ProducteGranel;
 import com.models.productes.ProducteUnitat;
 
 public class MenuController {
-	
+
 	private static List<Producte> llista = new ArrayList<Producte>();
+	private static Scanner scanner = new Scanner(System.in);
 
 	public static void opcioMenu(int opcio) {
 		switch (opcio) {
 		case 1:
-	            carregarDades();
+			carregarDades();
 			break;
-	        case 2:
-	            llistarDades();
-	            break;
-	        case 3:
-	            llistarDadesCeliacs();
-	            break;
-	        case 4:
-	            llistarOfertaProductes();
-	            break;
-	        case 5:
-	            afergirProducte();
-	            break;
-	        case 6:
-	            esborrarProducte();
-	            break;
-	        case 7:
-	            modificarDades();
-	            break;
-	        case 8:
-	            llistarCompres();
-	            break;
-	        case 9:
-	            modificarUbicacio();
-	            break;
-	        case 10:
-	            consultarProductor();
-	            break;
-	        case 11:
-	            afegirCompra();
-	            break;
+		case 2:
+			llistarDades();
+			break;
+		case 3:
+			llistarDadesCeliacs();
+			break;
+		case 4:
+			System.out.println("Quin ID de productor? ");
+        	int i=scanner.nextInt();
+            llistarOfertaProductes(i);
+			break;
+		case 5:
+			afergirProducte();
+			break;
+		case 6:
+			esborrarProducte();
+			break;
+		case 7:
+			modificarDades();
+			break;
+		case 8:
+			llistarCompres();
+			break;
+		case 9:
+			modificarUbicacio();
+			break;
+		case 10:
+			consultarProductor();
+			break;
+		case 11:
+			afegirCompra();
+			break;
 		case 0:
 			System.out.println();
 			System.out.println("PROGRAMA FINALITZAT");
 			System.exit(0);
 			break;
 		}
-		
+
 	}
 
 	private static void carregarDades() {
-		File f = new File("D:\\Code\\roger\\ConsoleApp\\src\\com\\consoleapp\\main\\productes.csv");   
+		File f = new File("D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\productes.csv");
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(f);
-			int r=0;  
+			int r = 0;
 			String linea = "";
-			while((r=fis.read())!=-1)  {
-				linea = linea.concat(Character.toString((char)r));
+			while ((r = fis.read()) != -1) {
+				linea = linea.concat(Character.toString((char) r));
 			}
-			
+
 			String[] arr = linea.split(";");
 			for (String s : arr) {
 				String[] arr2 = s.split(",");
-				if(arr2[0].charAt(0) == 'U') {
+				if (arr2[0].charAt(0) == 'U') {
 					ProducteUnitat pU = new ProducteUnitat();
 					pU.setId(arr2[0]);
 					pU.setNom(arr2[1]);
@@ -98,53 +102,90 @@ public class MenuController {
 			System.out.println("No hem trobat el fitxer");
 		} catch (IOException e) {
 			System.out.println("Error llegint el fitxer");
-		}   
+		}
 	}
-	
+
 	private static void llistarDades() {
-			for(Producte producte : llista) {
-				if(producte instanceof ProducteUnitat) {
-					ProducteUnitat product = (ProducteUnitat) producte;
-					String prod = "Procute noseque" + product.getId() + 
-							"el nom es: " + product.getNom();
+		for (Producte producte : llista) {
+			if (producte instanceof ProducteUnitat) {
+				ProducteUnitat product = (ProducteUnitat) producte;
+				String prod = "ID Procute " + product.getId() + "el nom es: " + product.getNom()
+						+ "el ID productor es: " + product.getIdProductor();
+				System.out.println(prod);
+			} else {
+				ProducteGranel product = (ProducteGranel) producte;
+				String prod = "ID Procute " + product.getId() + "el nom es: " + product.getNom()
+						+ "el ID productor es: " + product.getIdProductor();
+				System.out.println(prod);
+			}
+		}
+	}
+
+	private static void llistarDadesCeliacs() {
+		for (Producte producte : llista) {
+			if (producte instanceof ProducteUnitat) {
+				ProducteUnitat product = (ProducteUnitat) producte;
+				if (((ProducteUnitat) producte).isCeliac()) {
+					String prod = "ID Procute " + product.getId() + "el nom es: " + product.getNom()
+							+ "el ID productor es: " + product.getIdProductor();
 					System.out.println(prod);
 				}
 			}
+		}
 	}
-	
-	private static void llistarDadesCeliacs() {
-		
-	}
-	
-	private static void llistarOfertaProductes() {
 
+	private static void llistarOfertaProductes(long idproductor) {
+		for (Producte producte : llista) {
+			if (producte.getIdProductor() == idproductor) {
+				System.out.println(producte);
+			}
+		}
 	}
-	
+
+//	private static void llistarDades() {
+//			for(Producte producte : llista) {
+//				if(producte instanceof ProducteUnitat) {
+//					ProducteUnitat product = (ProducteUnitat) producte;
+//					String prod = "Procute noseque" + product.getId() + 
+//							"el nom es: " + product.getNom();
+//					System.out.println(prod);
+//				}
+//			}
+//	}
+//	
+//	private static void llistarDadesCeliacs() {
+//		
+//	}
+//	
+//	private static void llistarOfertaProductes() {
+//
+//	}
+
 	private static void afergirProducte() {
 
 	}
-	
+
 	private static void esborrarProducte() {
 
 	}
-	
+
 	private static void modificarDades() {
-		
+
 	}
-	
-	private static void llistarCompres() {	
-	
+
+	private static void llistarCompres() {
+
 	}
 
 	private static void modificarUbicacio() {
 
 	}
-	
+
 	private static void consultarProductor() {
-		
+
 	}
-	
+
 	private static void afegirCompra() {
-		
+
 	}
 }
