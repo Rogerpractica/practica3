@@ -1,7 +1,12 @@
 package com.models.productor;
 
-public class Productor {
-	private long id;
+import java.io.Serializable;
+
+public class Productor implements Serializable {
+	
+	private static final long serialVersionUID = 3005165714585574738L;
+	
+	private String id;
 	private String nom;
 	private String latitud;
 	private String longitud;
@@ -14,7 +19,7 @@ public class Productor {
 	 * @param latitud
 	 * @param longitud
 	 */
-	public Productor(long id, String nom, String latitud, String longitud) {
+	public Productor(String id, String nom, String latitud, String longitud) {
 		super();
 		this.id = id;
 		this.nom = nom;
@@ -22,11 +27,11 @@ public class Productor {
 		this.longitud = longitud;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
