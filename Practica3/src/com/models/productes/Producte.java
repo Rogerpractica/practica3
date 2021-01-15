@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.models.productor.Productor;
 
-public abstract class Producte implements Serializable{ 
+public abstract class Producte implements Serializable { 
 	
 	private static final long serialVersionUID = -1230363787961150097L;
 	
