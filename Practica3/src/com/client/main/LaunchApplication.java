@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import com.consoleapp.main.Console;
+import com.graficapp.main.GraficApplication;
 
 public class LaunchApplication {
 	
@@ -69,7 +70,9 @@ public class LaunchApplication {
 		//Button Grafic.
 		btnModeGrafic = new JButton("Mode Gr\u00E0fic");
 		btnModeGrafic.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {	
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(Boolean.FALSE);
+				GraficApplication.run();
 			}
 		});
 		btnModeGrafic.setBounds(10, 77, 449, 55);
