@@ -7,6 +7,7 @@ public class Compra implements Serializable {
 
 	private static final long serialVersionUID = 5077275284728628066L;
 
+	private int index;
 	private Producte producte;
 	private long quantitat;
 	private Date data;
@@ -45,6 +46,14 @@ public class Compra implements Serializable {
 
 	public void setTotal(double total) {
 		this.total = total;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 }

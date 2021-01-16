@@ -7,32 +7,44 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.TableModel;
 
+import com.graficapp.client.compres.CompraNovaApp;
 import com.models.productes.Compra;
+import com.models.productes.Producte;
+import com.models.productes.ProducteGranel;
+import com.models.productor.Productor;
+import com.models.tablemodels.CompresTableModel;
 
 public class ClientGraficApp {
 
 	private static final String PATH_COMPRES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\compres.txt";
 
 	private static List<Compra> llistaCompres = new ArrayList<Compra>();
-
-	private JFrame frame;
+	private static List<Producte> llista = new ArrayList<Producte>();
+	
+	private static JFrame frame;
 	private JTextField txtFLat;
 	private JTextField txtFLon;
 
 	private long latitud;
 	private long longitud;
-	private JTable tableCompres;
+
+	private static JTable table;
+	private static JTextField lblFins;
+	private static JTextField lblDesde;
+
+	private static JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -59,7 +71,7 @@ public class ClientGraficApp {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 591, 473);
+		frame.setBounds(100, 100, 599, 140);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
@@ -93,68 +105,199 @@ public class ClientGraficApp {
 		JButton btnPosicioContinuar = new JButton("CONTINUAR");
 		btnPosicioContinuar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (!txtFLat.getText().isEmpty() && !txtFLon.getText().isEmpty()) {
+				if (btnPosicioContinuar.getText().equals("CONTINUAR")) {
+					if (!txtFLat.getText().isEmpty() && !txtFLon.getText().isEmpty()) {
 
-					lblLat.setForeground(Color.WHITE);
-					lblLon.setForeground(Color.WHITE);
-					lblErrorPosicio.setText("");
-					btnPosicioContinuar.setText("ACTUALITZAR");
-					latitud = Long.parseLong(txtFLat.getText());
-					longitud = Long.parseLong(txtFLon.getText());
-					carregarCompres();
+						lblLat.setForeground(Color.BLACK);
+						lblLon.setForeground(Color.BLACK);
+						lblErrorPosicio.setText("");
+						btnPosicioContinuar.setText("ACTUALITZAR");
+						latitud = Long.parseLong(txtFLat.getText());
+						longitud = Long.parseLong(txtFLon.getText());
 
-					DefaultListModel<String> listModel = new DefaultListModel<String>();
+//						initTable();
+//						initlabels();
+//						initComboBoxFiltreProductors();
+//						
+//						frame.setBounds(100, 100, 895, 475);
 
-					Object[] arrC = (Object[]) llistaCompres.toArray();
-
-					Object[][] arrGeneral = new Object[arrC.length][4];
-
-					for (int i = 0; i < arrC.length; i++) {
-						for (int j = 0; j < 4; j++) {
-							switch (j) {
-								case 0: {
-									arrGeneral[i][j] = ((Compra)arrC[i]).getProducte().getId();
-									break;
-								}
-								
-								case 1: {
-									arrGeneral[i][j] = ((Compra)arrC[i]).getQuantitat();
-									break;
-								}
-								
-								case 2: {
-									SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-									arrGeneral[i][j] = sdf.format(((Compra)arrC[i]).getData());
-									break;
-								}
-								
-								case 3: {
-									arrGeneral[i][j] = ((Compra)arrC[i]).getTotal();
-									break;
-								}
-							}
-						}
+					} else {
+						lblLat.setForeground(Color.RED);
+						lblLon.setForeground(Color.RED);
+						lblErrorPosicio.setText("Introdueix la teva posició per continuar.");
 					}
-
-					String[] columnes = { "Id Producte", "Quantitat", "Data", "Total" };
-
-					tableCompres = new JTable(arrGeneral, columnes);
-					tableCompres.setBounds(10, 118, 388, 140);
-					tableCompres.setEnabled(Boolean.FALSE);
-					frame.getContentPane().add(tableCompres);
-
 				} else {
-					lblLat.setForeground(Color.RED);
-					lblLon.setForeground(Color.RED);
-					lblErrorPosicio.setText("Introdueix la teva posició per continuar.");
+					if (!txtFLat.getText().isEmpty() && !txtFLon.getText().isEmpty()) {
+						latitud = Long.parseLong(txtFLat.getText());
+						longitud = Long.parseLong(txtFLon.getText());
+						lblLat.setForeground(Color.BLACK);
+						lblLon.setForeground(Color.BLACK);
+						lblErrorPosicio.setText("Posició actualitzada correctament.");
+					} else {
+						lblLat.setForeground(Color.RED);
+						lblLon.setForeground(Color.RED);
+						lblErrorPosicio.setText("Introdueix la latitud i la longitud per actualitzar la teva posició.");
+					}
 				}
+
 			}
 		});
 		btnPosicioContinuar.setBounds(10, 59, 547, 23);
 		frame.getContentPane().add(btnPosicioContinuar);
 
-//		list.setVisible(Boolean.FALSE);
+		// ---------------------------
+		initTable();
+		initlabels();
+		initComboBoxFiltreProductors();
+		initButtons();
 
+		frame.setBounds(100, 100, 895, 475);
+		// ---------------------------
+
+	}
+
+	private void initButtons() {
+		// Button filtrar
+		JButton btnFiltrarCompres = new JButton("FILTRAR");
+		btnFiltrarCompres.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List<Compra> listC = new ArrayList<Compra>();
+				for (Compra c : llistaCompres) {
+					String desde = lblDesde.getText();
+					String fins = lblFins.getText();
+
+					if (desde.equals("") && fins.equals("")) {
+						listC = llistaCompres;
+					} else if (!desde.equals("") && !fins.equals("")) {
+						if (c.getProducte() instanceof ProducteGranel) {
+							ProducteGranel p = (ProducteGranel) c.getProducte();
+							double pesTotalCompra = c.getQuantitat() * p.getPes();
+							if (pesTotalCompra <= Double.parseDouble(lblFins.getText())
+									&& pesTotalCompra >= Double.parseDouble(lblDesde.getText())) {
+								listC.add(c);
+							}
+						}
+					} else {
+						listC = llistaCompres;
+					}
+				}
+				table.setModel(new CompresTableModel(listC));
+				scrollPane.setViewportView(table);
+			}
+		});
+		btnFiltrarCompres.setBounds(596, 181, 252, 23);
+		frame.getContentPane().add(btnFiltrarCompres);
+
+		// Button Afegir Compra
+
+		JButton btnAfegirCompra = new JButton("AFEGIR COMPRA");
+		btnAfegirCompra.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ObjectInputStream objectinputstream = null;
+				try {
+					FileInputStream streamIn = new FileInputStream(new File(PATH_COMPRES));
+					objectinputstream = new ObjectInputStream(streamIn);
+					List<Compra> llistaCompresRecuperada = (List<Compra>) objectinputstream.readObject();
+					CompraNovaApp.run(llistaCompresRecuperada);
+				} catch (Exception ex) {
+				}
+			}
+		});
+		btnAfegirCompra.setBounds(594, 229, 254, 23);
+		frame.getContentPane().add(btnAfegirCompra);
+	}
+
+	private static void initTable() {
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 118, 555, 307);
+		frame.getContentPane().add(scrollPane);
+
+		carregarCompres();
+		TableModel tM = new CompresTableModel(llistaCompres);
+		table = new JTable();
+		table.setModel(tM);
+		table.setAutoCreateRowSorter(true);
+		scrollPane.setViewportView(table);
+
+		JLabel lblNewLabel = new JLabel("Filtres");
+		lblNewLabel.setBounds(722, 31, 46, 14);
+		frame.getContentPane().add(lblNewLabel);
+
+		lblFins = new JTextField();
+		lblFins.setBounds(762, 93, 86, 20);
+		frame.getContentPane().add(lblFins);
+		lblFins.setColumns(10);
+
+		lblDesde = new JTextField();
+		lblDesde.setBounds(637, 93, 86, 20);
+		frame.getContentPane().add(lblDesde);
+		lblDesde.setColumns(10);
+
+	}
+
+	private static void initlabels() {
+		JLabel lblNewLabel_1 = new JLabel("Filtrar per Kilos");
+		lblNewLabel_1.setBounds(704, 63, 144, 14);
+		frame.getContentPane().add(lblNewLabel_1);
+
+		JLabel lblNewLabel_2 = new JLabel("Desde:");
+		lblNewLabel_2.setBounds(596, 93, 138, 14);
+		frame.getContentPane().add(lblNewLabel_2);
+
+		JLabel lblNewLabel_3 = new JLabel("Fins:");
+		lblNewLabel_3.setBounds(729, 93, 58, 14);
+		frame.getContentPane().add(lblNewLabel_3);
+
+		JLabel lblNewLabel_4 = new JLabel("Filtrar per Productors");
+		lblNewLabel_4.setBounds(685, 125, 102, 14);
+		frame.getContentPane().add(lblNewLabel_4);
+	}
+
+	private static void initComboBoxFiltreProductors() {
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(660, 150, 150, 20);
+
+		List<Productor> listProductors = new ArrayList<Productor>();
+		boolean hit = false;
+		for (Compra c : llistaCompres) {
+			hit = false;
+			for (Productor p : listProductors) {
+				if (p.getId().equals(c.getProducte().getProductor().getId())) {
+					hit = true;
+				}
+			}
+			if (!hit) {
+				listProductors.add(c.getProducte().getProductor());
+			}
+		}
+
+		comboBox.addItem("0: TOTS");
+		for (Productor p : listProductors) {
+			comboBox.addItem(p.getId() + ": " + p.getNom());
+		}
+
+		comboBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				List<Compra> llistaC = new ArrayList<Compra>();
+				if (!"0".equals(((String) comboBox.getSelectedItem()).split(": ")[0])) {
+					llistaCompres.clear();
+					carregarCompres();
+					for (Compra c : llistaCompres) {
+						if (c.getProducte().getProductor().getId()
+								.equals(((String) comboBox.getSelectedItem()).split(": ")[0])) {
+							llistaC.add(c);
+						}
+					}
+					llistaCompres = llistaC;
+				} else {
+					llistaCompres.clear();
+					carregarCompres();
+				}
+			}
+		});
+		frame.getContentPane().add(comboBox);
 	}
 
 	private static void carregarCompres() {
@@ -163,9 +306,22 @@ public class ClientGraficApp {
 			FileInputStream streamIn = new FileInputStream(new File(PATH_COMPRES));
 			objectinputstream = new ObjectInputStream(streamIn);
 			List<Compra> llistaCompresRecuperada = (List<Compra>) objectinputstream.readObject();
-			llistaCompres = llistaCompresRecuperada;
+			if (llistaCompres.isEmpty()) {
+				llistaCompres = llistaCompresRecuperada;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void guardarCompra(Compra compra) {
+		llistaCompres.add(compra);
+		llista = CompraNovaApp.carregarProductes();
+		for(Producte p : llista) {
+			if(compra.getProducte().getId().equals(p.getId())) {
+				p.setStock(p.getStock() - compra.getQuantitat());
+			}
+		}
+	}
+
 }

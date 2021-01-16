@@ -563,7 +563,6 @@ public class MenuController {
 			List<Compra> llistaCompresRecuperada = (List<Compra>) objectinputstream.readObject();
 			llistaCompres = llistaCompresRecuperada;
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
