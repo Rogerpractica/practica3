@@ -8,6 +8,7 @@ public abstract class Producte implements Serializable {
 	
 	private static final long serialVersionUID = -1230363787961150097L;
 	
+	private int index;
 	private String id;
 	private String nom;
 	private Productor productor;
@@ -79,6 +80,14 @@ public abstract class Producte implements Serializable {
 
 	public void setPreu(double preu) {
 		this.preu = preu;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 }

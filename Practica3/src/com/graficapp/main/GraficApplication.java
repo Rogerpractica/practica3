@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.graficapp.client.ClientGraficApp;
+import com.graficapp.productor.ProductorGraficApp;
 
 public class GraficApplication {
 
@@ -51,6 +52,8 @@ public class GraficApplication {
 		JButton btnProductor = new JButton("PRODUCTOR");
 		btnProductor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(Boolean.FALSE);
+				ProductorGraficApp.run();
 			}
 		});
 		btnProductor.setFont(new Font("Calibri", Font.BOLD, 20));

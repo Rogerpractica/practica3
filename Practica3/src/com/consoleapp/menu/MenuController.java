@@ -26,9 +26,9 @@ import com.models.productor.Productor;
 public class MenuController {
 
 //	private static final String PATH_GENERIC = "..\\main\\";
-	private static final String PATH_COMPRES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\compres.txt";
-	private static final String PATH_PRODUCTES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\productes.txt";
-	private static final String PATH_PRODUCTORS = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\productors.txt";
+	private static final String PATH_COMPRES = ".\\src\\com\\consoleapp\\main\\compres.txt";
+	private static final String PATH_PRODUCTES = ".\\src\\com\\consoleapp\\main\\productes.txt";
+	private static final String PATH_PRODUCTORS = ".\\src\\com\\consoleapp\\main\\productors.txt";
 
 	private static final String UNZERO = "0";
 	private static final String DOSZERO = "00";
@@ -485,9 +485,10 @@ public class MenuController {
 
 	}
 
-	private static void carregarProductors() {
+	public static List<Productor> carregarProductors() {
 		FileInputStream fis;
 		try {
+			llistaProductors.clear();
 			fis = new FileInputStream(new File(PATH_PRODUCTORS));
 			int r = 0;
 			String lineaGeneral = "";
@@ -510,19 +511,22 @@ public class MenuController {
 		} catch (IOException e) {
 			System.out.println("Error llegint el fitxer");
 		}
+		return llistaProductors;
 
 	}
 
-	private static void carregarProductes() {
+	public static List<Producte> carregarProductes() {
 		FileInputStream fis;
 		try {
+			llista.clear();
 			fis = new FileInputStream(new File(PATH_PRODUCTES));
 			int r = 0;
-			String linea = "";
+			String lineaGeneral = "";
 			while ((r = fis.read()) != -1) {
-				linea = linea.concat(Character.toString((char) r));
+				lineaGeneral = lineaGeneral.concat(Character.toString((char) r));
 			}
-
+			
+			String linea = lineaGeneral.replace("\r", "");
 			String[] arr = linea.split("\n");
 			for (String s : arr) {
 				String[] arr2 = s.split(";");
@@ -553,6 +557,7 @@ public class MenuController {
 		} catch (IOException e) {
 			System.out.println("Error llegint el fitxer");
 		}
+		return llista;
 	}
 
 	private static void carregarCompres() {

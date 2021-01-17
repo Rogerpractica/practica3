@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,8 @@ import com.models.tablemodels.CompresTableModel;
 
 public class ClientGraficApp {
 
-	private static final String PATH_COMPRES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\compres.txt";
+//	private static final String PATH_COMPRES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\compres.txt";
+	private static final String PATH_COMPRES = ".\\src\\com\\consoleapp\\main\\compres.txt";
 
 	private static List<Compra> llistaCompres = new ArrayList<Compra>();
 	private static List<Producte> llista = new ArrayList<Producte>();
@@ -36,6 +39,7 @@ public class ClientGraficApp {
 	private static JFrame frame;
 	private JTextField txtFLat;
 	private JTextField txtFLon;
+	private static JLabel lblSortir;
 
 	private long latitud;
 	private long longitud;
@@ -43,6 +47,9 @@ public class ClientGraficApp {
 	private static JTable table;
 	private static JTextField lblFins;
 	private static JTextField lblDesde;
+	
+	private static JButton btnSortirSi;
+	private static JButton btnSortirNo;
 
 	private static JScrollPane scrollPane;
 
@@ -115,11 +122,12 @@ public class ClientGraficApp {
 						latitud = Long.parseLong(txtFLat.getText());
 						longitud = Long.parseLong(txtFLon.getText());
 
-//						initTable();
-//						initlabels();
-//						initComboBoxFiltreProductors();
-//						
-//						frame.setBounds(100, 100, 895, 475);
+						initTable();
+						initlabels();
+						initComboBoxFiltreProductors();
+						initButtons();
+
+						frame.setBounds(100, 100, 895, 475);
 
 					} else {
 						lblLat.setForeground(Color.RED);
@@ -144,16 +152,6 @@ public class ClientGraficApp {
 		});
 		btnPosicioContinuar.setBounds(10, 59, 547, 23);
 		frame.getContentPane().add(btnPosicioContinuar);
-
-		// ---------------------------
-		initTable();
-		initlabels();
-		initComboBoxFiltreProductors();
-		initButtons();
-
-		frame.setBounds(100, 100, 895, 475);
-		// ---------------------------
-
 	}
 
 	private void initButtons() {
@@ -205,6 +203,58 @@ public class ClientGraficApp {
 		});
 		btnAfegirCompra.setBounds(594, 229, 254, 23);
 		frame.getContentPane().add(btnAfegirCompra);
+		
+		JButton btnSortir = new JButton("Sortir");
+		btnSortir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblSortir.setText("Vols guardar les dades als fitxers?");
+				btnSortirNo.setVisible(true);
+				btnSortirSi.setVisible(true);
+			}
+		});
+		btnSortir.setBounds(596, 290, 252, 23);
+		frame.getContentPane().add(btnSortir);
+		
+		btnSortirSi = new JButton("Si");
+		btnSortirSi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+
+					// Fitxer compres.
+					FileOutputStream fileOut = new FileOutputStream(new File(PATH_COMPRES));
+					ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+					objectOut.writeObject(llistaCompres);
+					objectOut.close();
+					System.out.println("Fitxers guardats correctament.");
+					System.out.println("PROGRAMA FINALITZAT");
+					System.exit(0);
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				
+			}
+		});
+		btnSortirSi.setBounds(596, 345, 89, 23);
+		btnSortirSi.setVisible(false);
+		frame.getContentPane().add(btnSortirSi);
+		
+		btnSortirNo = new JButton("No");
+		btnSortirNo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				System.exit(0);
+				
+			}
+		});
+		btnSortirNo.setBounds(769, 345, 89, 23);
+		btnSortirNo.setVisible(false);
+		frame.getContentPane().add(btnSortirNo);
+		
+		lblSortir = new JLabel("");
+		lblSortir.setBounds(596, 324, 252, 14);
+		frame.getContentPane().add(lblSortir);
 	}
 
 	private static void initTable() {
@@ -317,11 +367,12 @@ public class ClientGraficApp {
 	public static void guardarCompra(Compra compra) {
 		llistaCompres.add(compra);
 		llista = CompraNovaApp.carregarProductes();
+		table.setModel(new CompresTableModel(llistaCompres));
+		scrollPane.setViewportView(table);
 		for(Producte p : llista) {
 			if(compra.getProducte().getId().equals(p.getId())) {
 				p.setStock(p.getStock() - compra.getQuantitat());
 			}
 		}
 	}
-
 }

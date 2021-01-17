@@ -29,8 +29,8 @@ import com.models.productor.Productor;
 
 public class CompraNovaApp {
 
-	private static final String PATH_PRODUCTES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\productes.txt";
-	private static final String PATH_PRODUCTORS = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\productors.txt";
+	private static final String PATH_PRODUCTES = ".\\src\\com\\consoleapp\\main\\productes.txt";
+	private static final String PATH_PRODUCTORS = ".\\src\\com\\consoleapp\\main\\productors.txt";
 
 	private static List<Producte> llista = new ArrayList<Producte>();
 	private static List<Productor> llistaProductors = new ArrayList<Productor>();
@@ -44,6 +44,7 @@ public class CompraNovaApp {
 	private static Productor productorSelecionat;
 	
 	private static JTextField txtFieldData;
+	private static JLabel lblError;
 	private static JTextField txtFTotal;
 	private static JComboBox comboBox;
 	private JLabel lblProductor;
@@ -153,18 +154,14 @@ public class CompraNovaApp {
 			public void actionPerformed(ActionEvent e) {
 				
 				Compra compra = new Compra();
-				
-				if(true) {
-//					TODO validar
+				if(validarCompra()) {
 					compra.setProducte(producteSelectionat);
 					compra.setQuantitat((int)spinnerQuant.getValue());
 					compra.setTotal(Double.parseDouble(txtFTotal.getText()));
 					ClientGraficApp.guardarCompra(compra);
 					try {
 						compra.setData(sdf.parse(txtFieldData.getText()));
-					} catch (ParseException e1) {
-						
-					}
+					} catch (ParseException e1) {}
 				}
 				
 			}
@@ -177,6 +174,10 @@ public class CompraNovaApp {
 		frame.getContentPane().add(comboCompres);
 		
 		comboCompres.addItem("Sel·lecciona la compra que vulguis duplicar");
+		
+		lblError = new JLabel("");
+		lblError.setBounds(12, 226, 302, 14);
+		frame.getContentPane().add(lblError);
 		for(Compra c : llistaCompres) {
 			comboCompres.addItem(
 					c.getProducte().getId() + 
@@ -244,7 +245,7 @@ public class CompraNovaApp {
 				}
 			}
 		});
-
+			
 		for (Producte p : llista) {
 			comboBox.addItem(p.getId() + ": " + p.getNom());
 		}
@@ -286,9 +287,10 @@ public class CompraNovaApp {
 		if(((int)spinnerQuant.getValue()) > 0 
 				&& !txtFieldData.getText().equals("")
 				&& Integer.parseInt(txtFStock.getText()) >= (int)spinnerQuant.getValue()) {
+			lblError.setText("");
 			return true;
-			
 		} else {
+			lblError.setText("Introdueix tots els camps correctament.");
 			return false;
 		}
 	}
@@ -303,6 +305,7 @@ public class CompraNovaApp {
 	}
 
 	public static List<Producte> carregarProductes() {
+		llista.clear();
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(new File(PATH_PRODUCTES));
