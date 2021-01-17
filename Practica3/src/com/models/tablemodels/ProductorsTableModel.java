@@ -98,8 +98,8 @@ public class ProductorsTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		Producte p = listProductes.get(rowIndex);
-		if (columnIndex == COLUMN_PREU) {
-			p.setPreu((double)value);
+		if (columnIndex == COLUMN_INDEX) {
+			p.setPreu((int)value);
 		}
 	}
 
