@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.consoleapp.menu"},{"l":"com.graficapp.client"},{"l":"com.graficapp.client.compres"},{"l":"com.graficapp.productor"},{"l":"com.models.productes"},{"l":"com.models.productor"}]

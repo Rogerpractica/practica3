@@ -6,8 +6,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,12 +19,14 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
 import com.consoleapp.menu.MenuController;
+import com.llista.LlistaProductes;
+import com.llista.LlistaProductors;
 import com.models.productes.Producte;
 import com.models.productes.ProducteGranel;
 import com.models.productes.ProducteUnitat;
 import com.models.productor.Productor;
 import com.models.tablemodels.ProductorsTableModel;
-
+@SuppressWarnings("rawtypes")
 public class ProductorGraficApp {
 
 	private static JFrame frame;
@@ -36,8 +36,8 @@ public class ProductorGraficApp {
 
 	private static JLabel lblBenvingut;
 
-	private static List<Productor> llistaProductors = new ArrayList<Productor>();
-	private static List<Producte> llista = new ArrayList<Producte>();
+	private static LlistaProductors llistaProductors = new LlistaProductors();
+	private static LlistaProductes llista = new LlistaProductes();
 
 	private static JScrollPane scrollPane;
 
@@ -56,8 +56,9 @@ public class ProductorGraficApp {
 	private static JTextField txtFPreu;
 
 	/**
-	 * Launch the application.
+	 * Activa l'aplicació.
 	 */
+	@SuppressWarnings("static-access")
 	public static void run() {
 		try {
 			ProductorGraficApp window = new ProductorGraficApp();
@@ -68,14 +69,14 @@ public class ProductorGraficApp {
 	}
 
 	/**
-	 * Create the application.
+	 * Crea l'aplicació.
 	 */
 	public ProductorGraficApp() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Inicialitza el contingut del frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -88,61 +89,73 @@ public class ProductorGraficApp {
 
 	}
 
+	/**
+	 * Inicialitza els botons.
+	 */
 	private static void initButtons() {
 		JButton btnNifProd = new JButton("CONTINUAR");
 		btnNifProd.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				llistaProductors = MenuController.carregarProductors();
+				llistaProductors.setLLista(MenuController.carregarProductors());
 				productorSeleccionat = null;
-				for (Productor p : llistaProductors) {
-					List<Producte> llistaP = new ArrayList<Producte>();
-					if (p.getId().equals(txtFNifProd.getText())) {
-						productorSeleccionat = p;
-						lblBenvingut.setText("Benvingut " + p.getNom());
-						llistaP = MenuController.carregarProductes();
-						llista.clear();
-						for (Producte producte : llistaP) {
-							if (producte.getProductor().getId().equals(productorSeleccionat.getId())) {
-								llista.add(producte);
-							}
-						}
-						initTaula();
-						initFiltres();
-						initComboBoxProductes();
-
-						if (!llista.isEmpty()) {
-							comboBoxProducte.addItem("0: Cap producte sel·leccionat");
-							for (Producte pro : llista) {
-								comboBoxProducte.addItem(pro.getId() + ": " + pro.getNom());
-							}
-						}
-
-						comboBoxProducte.addActionListener(new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-
-								for (Producte p : llista) {
-									if (((String) comboBoxProducte.getSelectedItem()).split(": ")[0]
-											.equals(p.getId())) {
-										producteSeleccionat = p;
-										txtFPreu.setEditable(true);
-										txtFStock.setEditable(true);
-										btnEditarProducte.setEnabled(true);
-									} else if (((String) comboBoxProducte.getSelectedItem()).split(": ")[0]
-											.equals("0")) {
-										txtFPreu.setEditable(false);
-										txtFStock.setEditable(false);
-										btnEditarProducte.setEnabled(false);
+				for (Productor p : llistaProductors.getLlista()) {
+					if(p != null) {
+						LlistaProductes llistaP = new LlistaProductes();
+						if (p.getId().equals(txtFNifProd.getText())) {
+							productorSeleccionat = p;
+							lblBenvingut.setText("Benvingut " + p.getNom());
+							llistaP.setLLista(MenuController.carregarProductes());
+							llista.clear();
+							for (Producte producte : (Producte[])llistaP.getLlista()) {
+								if(producte != null) {
+									if (producte.getProductor().getId().equals(productorSeleccionat.getId())) {
+										llista.add(producte);
 									}
 								}
-
 							}
-						});
-						break;
-					}
-				}
+							initTaula();
+							initFiltres();
+							initComboBoxProductes();
 
+							if (!llista.isEmpty()) {
+								comboBoxProducte.addItem("0: Cap producte sel·leccionat");
+								for (Producte pro : (Producte[])llista.getLlista()) {
+									if(pro != null) {
+										comboBoxProducte.addItem(pro.getId() + ": " + pro.getNom());
+									}
+								}
+							}
+
+							comboBoxProducte.addActionListener(new ActionListener() {
+
+								@Override
+								public void actionPerformed(ActionEvent e) {
+
+									for (Producte p : (Producte[])llista.getLlista()) {
+										if(p != null) {
+											if (((String) comboBoxProducte.getSelectedItem()).split(": ")[0]
+													.equals(p.getId())) {
+												producteSeleccionat = p;
+												txtFPreu.setEditable(true);
+												txtFStock.setEditable(true);
+												btnEditarProducte.setEnabled(true);
+											} else if (((String) comboBoxProducte.getSelectedItem()).split(": ")[0]
+													.equals("0")) {
+												txtFPreu.setEditable(false);
+												txtFStock.setEditable(false);
+												btnEditarProducte.setEnabled(false);
+											}
+										}
+									}
+
+								}
+							});
+							break;
+						}
+					}
+					
+				}
 				if (productorSeleccionat == null) {
 					lblBenvingut.setText("No s'ha trobat el NIF introduït, introdueix un NIF vàlid.");
 					frame.setBounds(100, 100, 451, 164);
@@ -152,13 +165,12 @@ public class ProductorGraficApp {
 		});
 		btnNifProd.setBounds(10, 67, 414, 23);
 		frame.getContentPane().add(btnNifProd);
-		// ----------------
-//		initTaula();
-//		initFiltres();
-//		initComboBoxProductes();
-		// ----------------
+
 	}
 
+	/**
+	 * Inicialitza els filtres.
+	 */
 	private static void initFiltres() {
 		rBtnPGranel = new JCheckBox("Producte Granel");
 		rBtnPGranel.setSelected(true);
@@ -185,7 +197,7 @@ public class ProductorGraficApp {
 					btnEditarProducte.setEnabled(false);
 					txtFPreu.setEnabled(false);
 					txtFStock.setEnabled(false);
-					for (Producte p : llista) {
+					for (Producte p : (Producte[])llista.getLlista()) {
 						if (p.getId().equals(producteSeleccionat.getId())) {
 							p.setPreu(Double.parseDouble(txtFPreu.getText()));
 							p.setStock(Long.parseLong(txtFStock.getText()));
@@ -224,11 +236,11 @@ public class ProductorGraficApp {
 		JButton btnFiltrar = new JButton("Filtrar");
 		btnFiltrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<Producte> llistaP = new ArrayList<Producte>();
-				List<Producte> llistaC = new ArrayList<Producte>();
-				llistaC = MenuController.carregarProductes();
+				LlistaProductes llistaP = new LlistaProductes();
+				LlistaProductes llistaC = new LlistaProductes();
+				llistaC.setLLista(MenuController.carregarProductes());
 				llista.clear();
-				for (Producte producte : llistaC) {
+				for (Producte producte : (Producte[])llistaC.getLlista()) {
 					if (producte.getProductor().getId().equals(productorSeleccionat.getId())) {
 						if(!chckbxOcultarStock.isSelected()) {
 							llista.add(producte);
@@ -238,14 +250,14 @@ public class ProductorGraficApp {
 					}
 				}
 				if (rBtnPGranel.isSelected()) {
-					for (Producte p : llista) {
+					for (Producte p : (Producte[])llista.getLlista()) {
 						if (p.getId().split("_")[0].equals("GR")) {
 							llistaP.add(p);
 						}
 					}
 				}
 				if (rBtnPUnitat.isSelected()) {
-					for (Producte p : llista) {
+					for (Producte p : (Producte[])llista.getLlista()) {
 						if (p.getId().split("_")[0].equals("UT")) {
 							llistaP.add(p);
 						}
@@ -266,7 +278,7 @@ public class ProductorGraficApp {
 				try {
 //					// Fitxer productes.
 					String totsElsPAGuardar = new String();
-					for (Producte producte : llista) {
+					for (Producte producte : (Producte[])llista.getLlista()) {
 						if (producte instanceof ProducteGranel) {
 							ProducteGranel p = (ProducteGranel) producte;
 							String productes = p.getId() + ";" + p.getNom() + ";" + p.getProductor().getId() + ";"
@@ -320,6 +332,9 @@ public class ProductorGraficApp {
 
 	}
 
+	/**
+	 * Inicialitza els productes per la taula.
+	 */
 	private static void initComboBoxProductes() {
 		comboBoxProducte = new JComboBox();
 		comboBoxProducte.setBounds(448, 126, 240, 20);
@@ -336,6 +351,9 @@ public class ProductorGraficApp {
 		frame.getContentPane().add(lblNewLabel_1);
 	}
 
+	/**
+	 * Inicialitza la taula.
+	 */
 	protected static void initTaula() {
 		frame.setBounds(100, 100, 714, 366);
 
@@ -343,13 +361,16 @@ public class ProductorGraficApp {
 		scrollPane.setBounds(10, 126, 414, 190);
 		frame.getContentPane().add(scrollPane);
 
-		TableModel tM = new ProductorsTableModel(llista);
+		TableModel tM = new ProductorsTableModel(llista.getLlista());
 		table = new JTable();
 		table.setModel(tM);
 		table.setAutoCreateRowSorter(true);
 		scrollPane.setViewportView(table);
 	}
 
+	/**
+	 * Inicialitza les etiquetes.
+	 */
 	private static void initLabels() {
 		JLabel lblProductorNif = new JLabel("Introdueix el NIF de productor", SwingConstants.CENTER);
 		lblProductorNif.setBounds(10, 11, 414, 14);

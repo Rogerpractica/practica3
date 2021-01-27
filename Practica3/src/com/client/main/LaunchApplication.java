@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import com.consoleapp.main.Console;
+import com.exception.ErrorGeneralException;
 import com.graficapp.main.GraficApplication;
 
 public class LaunchApplication {
@@ -18,9 +19,7 @@ public class LaunchApplication {
 	private JButton btnModeConsola;
 	private JButton btnModeGrafic;
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -34,19 +33,15 @@ public class LaunchApplication {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public LaunchApplication() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		initFrame();
 		initBtns();
+		
+		
 	}
 
 	private void initFrame() {
@@ -61,7 +56,11 @@ public class LaunchApplication {
 		btnModeConsola = new JButton("Mode Consola");
 		btnModeConsola.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				initConsole();
+				try {
+					initConsole();
+				} catch (ErrorGeneralException ex) {
+					System.out.println("Error general: " + ex.getMessage());
+				}
 			}			
 		});
 		btnModeConsola.setBounds(10, 11, 449, 55);
@@ -79,7 +78,7 @@ public class LaunchApplication {
 		frame.getContentPane().add(btnModeGrafic);
 	}
 
-	private void initConsole() {
+	private void initConsole() throws ErrorGeneralException {
 		console = new Console();
 		console.init();
 	}

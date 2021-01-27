@@ -27,6 +27,7 @@ import com.models.productes.ProducteGranel;
 import com.models.productes.ProducteUnitat;
 import com.models.productor.Productor;
 
+@SuppressWarnings("rawtypes")
 public class CompraNovaApp {
 
 	private static final String PATH_PRODUCTES = ".\\src\\com\\consoleapp\\main\\productes.txt";
@@ -41,7 +42,6 @@ public class CompraNovaApp {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	private static Producte producteSelectionat;
-	private static Productor productorSelecionat;
 	
 	private static JTextField txtFieldData;
 	private static JLabel lblError;
@@ -56,12 +56,13 @@ public class CompraNovaApp {
 	private JTextField txtFStock;
 	private JTextField txtFPreu;
 	private JLabel lblNomProducte;
+	
 	private JComboBox comboCompres;
 
+	@SuppressWarnings("static-access")
 	/**
-	 * Launch the application.
+	 * Mètode que ejecuta l'aplicació.
 	 */
-
 	public static void run(List<Compra> llistaC) {
 		try {
 			llistaCompres = llistaC;
@@ -73,14 +74,14 @@ public class CompraNovaApp {
 	}
 
 	/**
-	 * Create the application.
+	 * Mètode que crea l'aplicació.
 	 */
 	public CompraNovaApp() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Mètode que inicialitza el contingut del frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -92,6 +93,10 @@ public class CompraNovaApp {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	/**
+	 * Mètode que inicialitza les compres dels productes.
+	 */
 	private void initComboBoxProductes() {
 
 		comboBox = new JComboBox();
@@ -283,6 +288,10 @@ public class CompraNovaApp {
 
 	}
 
+	/**
+	 * Mètode que diu si la compra és vàlida o no
+	 * @return booleà si la compra és validada o no.
+	 */
 	protected boolean validarCompra() {
 		if(((int)spinnerQuant.getValue()) > 0 
 				&& !txtFieldData.getText().equals("")
@@ -295,6 +304,11 @@ public class CompraNovaApp {
 		}
 	}
 
+	/**
+	 * Mètode que diu si el id introduït pertany a algún producte de la llista. 
+	 * @param id
+	 * @return si existeix o no el producte introduït per ID.
+	 */
 	private static Producte getProducteById(String id) {
 		for (Producte producte : llista) {
 			if (producte.getId().equals(id)) {
@@ -304,6 +318,10 @@ public class CompraNovaApp {
 		return null;
 	}
 
+	/**
+	 * Mètode que carrega els productes de la llista.
+	 * @return la llista carregada.
+	 */
 	public static List<Producte> carregarProductes() {
 		llista.clear();
 		FileInputStream fis;
@@ -348,6 +366,11 @@ public class CompraNovaApp {
 		return llista;
 	}
 
+	/**
+	 * Mètode que diu si el id introduït pertany a algún productor de la llista. 
+	 * @param id
+	 * @return si existeix o no el productor introduït per ID.
+	 */
 	private static Productor getProductorById(String id) {
 		for (Productor productor : llistaProductors) {
 			if (productor.getId().equals(id)) {
@@ -357,6 +380,9 @@ public class CompraNovaApp {
 		return null;
 	}
 
+	/**
+	 * Mètode que carrega els productors.
+	 */
 	private static void carregarProductors() {
 		FileInputStream fis;
 		try {
@@ -385,6 +411,9 @@ public class CompraNovaApp {
 
 	}
 
+	/**
+	 * Mètode que inicialitza els camps de compra.
+	 */
 	private void initCampsCompra() {
 
 		JLabel lblProducte = new JLabel("Producte:");

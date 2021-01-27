@@ -15,10 +15,6 @@ public class GraficApplication {
 
 	private JFrame frame;
 
-	/**
-	 * Launch the application.
-	 */
-
 	public static void run() {
 		try {
 			GraficApplication window = new GraficApplication();
@@ -28,16 +24,10 @@ public class GraficApplication {
 		}
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public GraficApplication() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 443, 211);

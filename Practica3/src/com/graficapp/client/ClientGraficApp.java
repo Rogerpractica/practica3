@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 
 import com.graficapp.client.compres.CompraNovaApp;
+import com.llista.LlistaCompres;
 import com.models.productes.Compra;
 import com.models.productes.Producte;
 import com.models.productes.ProducteGranel;
@@ -30,10 +31,9 @@ import com.models.tablemodels.CompresTableModel;
 
 public class ClientGraficApp {
 
-//	private static final String PATH_COMPRES = "D:\\Code\\roger\\Practica3\\src\\com\\consoleapp\\main\\compres.txt";
 	private static final String PATH_COMPRES = ".\\src\\com\\consoleapp\\main\\compres.txt";
 
-	private static List<Compra> llistaCompres = new ArrayList<Compra>();
+	private static LlistaCompres llistaCompres = new LlistaCompres();
 	private static List<Producte> llista = new ArrayList<Producte>();
 	
 	private static JFrame frame;
@@ -41,7 +41,10 @@ public class ClientGraficApp {
 	private JTextField txtFLon;
 	private static JLabel lblSortir;
 
+	@SuppressWarnings("unused")
 	private long latitud;
+
+	@SuppressWarnings("unused")
 	private long longitud;
 
 	private static JTable table;
@@ -54,9 +57,9 @@ public class ClientGraficApp {
 	private static JScrollPane scrollPane;
 
 	/**
-	 * Launch the application.
+	 * Mètode que activa l'aplicació.
 	 */
-
+	@SuppressWarnings("static-access")
 	public static void run() {
 		try {
 			ClientGraficApp window = new ClientGraficApp();
@@ -67,14 +70,14 @@ public class ClientGraficApp {
 	}
 
 	/**
-	 * Create the application.
+	 * Mètode que crea l'aplicació.
 	 */
 	public ClientGraficApp() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Mètode que inicialitza el contingut del frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -154,13 +157,16 @@ public class ClientGraficApp {
 		frame.getContentPane().add(btnPosicioContinuar);
 	}
 
+	/**
+	 * Mètode que inicialitza els botons de la gràfica en el client compres.
+	 */
 	private void initButtons() {
 		// Button filtrar
 		JButton btnFiltrarCompres = new JButton("FILTRAR");
 		btnFiltrarCompres.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				List<Compra> listC = new ArrayList<Compra>();
-				for (Compra c : llistaCompres) {
+				LlistaCompres listC = new LlistaCompres();
+				for (Compra c : llistaCompres.getLlista()) {
 					String desde = lblDesde.getText();
 					String fins = lblFins.getText();
 
@@ -179,7 +185,7 @@ public class ClientGraficApp {
 						listC = llistaCompres;
 					}
 				}
-				table.setModel(new CompresTableModel(listC));
+				table.setModel(new CompresTableModel(listC.getLlista()));
 				scrollPane.setViewportView(table);
 			}
 		});
@@ -195,6 +201,7 @@ public class ClientGraficApp {
 				try {
 					FileInputStream streamIn = new FileInputStream(new File(PATH_COMPRES));
 					objectinputstream = new ObjectInputStream(streamIn);
+					@SuppressWarnings("unchecked")
 					List<Compra> llistaCompresRecuperada = (List<Compra>) objectinputstream.readObject();
 					CompraNovaApp.run(llistaCompresRecuperada);
 				} catch (Exception ex) {
@@ -257,13 +264,16 @@ public class ClientGraficApp {
 		frame.getContentPane().add(lblSortir);
 	}
 
+	/**
+	 * Mètode que inicialitza la taula.
+	 */
 	private static void initTable() {
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 118, 555, 307);
 		frame.getContentPane().add(scrollPane);
 
 		carregarCompres();
-		TableModel tM = new CompresTableModel(llistaCompres);
+		TableModel tM = new CompresTableModel(llistaCompres.getLlista());
 		table = new JTable();
 		table.setModel(tM);
 		table.setAutoCreateRowSorter(true);
@@ -285,9 +295,12 @@ public class ClientGraficApp {
 
 	}
 
+	/**
+	 * Mètode que crea i inicialitza els botons per els filtres.
+	 */
 	private static void initlabels() {
 		JLabel lblNewLabel_1 = new JLabel("Filtrar per Kilos");
-		lblNewLabel_1.setBounds(704, 63, 144, 14);
+		lblNewLabel_1.setBounds(690, 63, 144, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 
 		JLabel lblNewLabel_2 = new JLabel("Desde:");
@@ -299,25 +312,32 @@ public class ClientGraficApp {
 		frame.getContentPane().add(lblNewLabel_3);
 
 		JLabel lblNewLabel_4 = new JLabel("Filtrar per Productors");
-		lblNewLabel_4.setBounds(685, 125, 102, 14);
+		lblNewLabel_4.setBounds(670, 125, 142, 14);
 		frame.getContentPane().add(lblNewLabel_4);
 	}
 
+	/**
+	 * Mètode que inicialitza tot.
+	 */
+	@SuppressWarnings("unchecked")
 	private static void initComboBoxFiltreProductors() {
+		@SuppressWarnings("rawtypes")
 		JComboBox comboBox = new JComboBox();
 		comboBox.setBounds(660, 150, 150, 20);
 
 		List<Productor> listProductors = new ArrayList<Productor>();
 		boolean hit = false;
-		for (Compra c : llistaCompres) {
-			hit = false;
-			for (Productor p : listProductors) {
-				if (p.getId().equals(c.getProducte().getProductor().getId())) {
-					hit = true;
+		for (Compra c : llistaCompres.getLlista()) {
+			if(c != null) {
+				hit = false;
+				for (Productor p : listProductors) {
+					if (p.getId().equals(c.getProducte().getProductor().getId())) {
+						hit = true;
+					}
 				}
-			}
-			if (!hit) {
-				listProductors.add(c.getProducte().getProductor());
+				if (!hit) {
+					listProductors.add(c.getProducte().getProductor());
+				}
 			}
 		}
 
@@ -330,11 +350,11 @@ public class ClientGraficApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				List<Compra> llistaC = new ArrayList<Compra>();
+				LlistaCompres llistaC = new LlistaCompres();
 				if (!"0".equals(((String) comboBox.getSelectedItem()).split(": ")[0])) {
 					llistaCompres.clear();
 					carregarCompres();
-					for (Compra c : llistaCompres) {
+					for (Compra c : llistaCompres.getLlista()) {
 						if (c.getProducte().getProductor().getId()
 								.equals(((String) comboBox.getSelectedItem()).split(": ")[0])) {
 							llistaC.add(c);
@@ -350,12 +370,15 @@ public class ClientGraficApp {
 		frame.getContentPane().add(comboBox);
 	}
 
+	/**
+	 * Mètode que carrega les compres.
+	 */
 	private static void carregarCompres() {
 		ObjectInputStream objectinputstream = null;
 		try {
 			FileInputStream streamIn = new FileInputStream(new File(PATH_COMPRES));
 			objectinputstream = new ObjectInputStream(streamIn);
-			List<Compra> llistaCompresRecuperada = (List<Compra>) objectinputstream.readObject();
+			LlistaCompres llistaCompresRecuperada = (LlistaCompres) objectinputstream.readObject();
 			if (llistaCompres.isEmpty()) {
 				llistaCompres = llistaCompresRecuperada;
 			}
@@ -363,11 +386,14 @@ public class ClientGraficApp {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Mètode que guarda la compra feta.
+	 * @param compra
+	 */
 	public static void guardarCompra(Compra compra) {
 		llistaCompres.add(compra);
 		llista = CompraNovaApp.carregarProductes();
-		table.setModel(new CompresTableModel(llistaCompres));
+		table.setModel(new CompresTableModel(llistaCompres.getLlista()));
 		scrollPane.setViewportView(table);
 		for(Producte p : llista) {
 			if(compra.getProducte().getId().equals(p.getId())) {

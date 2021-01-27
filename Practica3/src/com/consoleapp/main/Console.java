@@ -3,6 +3,7 @@ package com.consoleapp.main;
 import java.util.Scanner;
 
 import com.consoleapp.menu.MenuController;
+import com.exception.ErrorGeneralException;
 
 public class Console {
 
@@ -11,7 +12,7 @@ public class Console {
 	private static String latitud;
 	private static String longitud;
 
-	public void init() {
+	public void init() throws ErrorGeneralException {
 		System.out.println("Benvingut.");
 		posicions();
 		initMenu();
@@ -25,7 +26,7 @@ public class Console {
 		longitud = scanner.next();
 	}
 
-	public void initMenu() {
+	public void initMenu() throws ErrorGeneralException {
 		String i = "";
 		int opcio = 0;
 		boolean ok = true;
@@ -71,7 +72,6 @@ public class Console {
 		if (lon != null && lon != "") {
 			longitud = lon;
 		}
-//		si long taltaltal
 	}
 
 	public static String getLatitud() {

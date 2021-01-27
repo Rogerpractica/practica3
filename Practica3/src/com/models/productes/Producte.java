@@ -24,7 +24,6 @@ public abstract class Producte implements Serializable {
 
 	/**
 	 * Metode Constructor
-	 * 
 	 * @param id
 	 * @param nom
 	 * @param idProductor
@@ -38,54 +37,97 @@ public abstract class Producte implements Serializable {
 	}
 
 	/**
-	 * Metode getter id
-	 * 
-	 * @return
+	 * Getter id
+	 * @return id
 	 */
 	public String getId() {
 		return id;
 	}
 
+	/**
+	 * Setter id
+	 * @param id
+	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+	 * Getter nom
+	 * @return nom
+	 */
 	public String getNom() {
 		return nom;
 	}
 
+	/**
+	 * Setter nom
+	 * @param nom
+	 */
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
 
+	/**
+	 * Getter productor
+	 * @return productor
+	 */
 	public Productor getProductor() {
 		return productor;
 	}
 
+	/**
+	 * Setter productor
+	 * @param productor
+	 */
 	public void setProductor(Productor productor) {
 		this.productor = productor;
 	}
 
+	/**
+	 * Getter estoc
+	 * @return estoc
+	 */
 	public long getStock() {
 		return stock;
 	}
 
+	/**
+	 * Setter estoc
+	 * @param stock
+	 */
 	public void setStock(long stock) {
 		this.stock = stock;
 	}
 
+	/**
+	 * Getter preu
+	 * @return preu
+	 */
 	public double getPreu() {
 		return preu;
 	}
 
+	/**
+	 * Setter preu
+	 * @param preu
+	 */
 	public void setPreu(double preu) {
 		this.preu = preu;
 	}
 	
+	/**
+	 * Getter �ndex
+	 * @return �ndex
+	 */
 	public int getIndex() {
 		return index;
 	}
 
+	/**
+	 * Setter �ndex
+	 * @param index
+	 */
 	public void setIndex(int index) {
 		this.index = index;
 	}
